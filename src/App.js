@@ -1,12 +1,9 @@
 import './App.css';
-import Authorization from './components/users/Authorization';
-import ConversationsList from './components/ConversationsList';
+import AppRouter from './routers/AppRouter';
 
 function App() {
   return (
-    <div>
-      { true ? <Authorization /> : <ConversationsList /> }
-    </div>
+    <AppRouter />
   );
 }
 
