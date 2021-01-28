@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Avatar,
   Button,
@@ -7,10 +7,41 @@ import {
   Grid,
   makeStyles,
   TextField,
-  Typography } from '@material-ui/core';
+  Typography
+} from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { userActions } from '../../actions/userActions';
 
 const RegisterForm = () => {
+  const [user, setUser] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    password: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const registering = useSelector(state => state.registration.registering);
+  const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   dispatch(userActions.logout());
+  // }, [dispatch]);
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setUser(user => ({ ...user, [name]: value }));
+  };
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    setSubmitted(true);
+    if (user.firstName && user.lastName && user.username && user.password) {
+      dispatch(userActions.register(user));
+    }
+  };
+
   const classes = makeStyles((theme) => ({
     paper: {
       marginTop: theme.spacing(8),
@@ -52,6 +83,8 @@ const RegisterForm = () => {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                value={user.firstName}
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -63,6 +96,8 @@ const RegisterForm = () => {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
+                value={user.lastName}
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -74,6 +109,8 @@ const RegisterForm = () => {
                 label="Username"
                 name="username"
                 autoComplete="username"
+                value={user.username}
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -86,6 +123,8 @@ const RegisterForm = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                value={user.password}
+                onChange={handleChange}
               />
             </Grid>
           </Grid>

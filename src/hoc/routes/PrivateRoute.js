@@ -15,12 +15,12 @@ export const fakeAuth = {
 
 function PrivateRoute({ component: Component, ...rest }) {
   return (
-    <Route {...rest} render={({ location }) => {
-      return fakeAuth.isAuthenticated === true
-        ? Component
+    <Route {...rest} render={(props) => {
+      return (localStorage.getItem('user'))
+        ? <Component {...props} />
         : <Redirect to={{
             pathname: '/login',
-            state: { from: location }
+            state: { from: props.location }
           }} />
     }} />
   )

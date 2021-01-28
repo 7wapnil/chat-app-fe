@@ -13,24 +13,38 @@ import {
 } from '@material-ui/core';
 
 import { Link, Redirect, useLocation } from 'react-router-dom';
-import { fakeAuth } from '../../hoc/routes/PrivateRoute';
+import { useDispatch, useSelector } from 'react-redux';
+import { userActions } from '../../actions/userActions';
+// import { fakeAuth } from '../../hoc/routes/PrivateRoute';
 
 const LoginForm = () => {
-  const [
-    redirectToReferrer,
-    setRedirectToReferrer
-  ] = useState(false)
+  const [inputs, setInputs] = useState({
+    username: '',
+    password: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const { username, password } = inputs;
+  const loggingIn = useSelector(state => state.authentication.loggingIn);
+  const dispatch = useDispatch();
+  const location = useLocation();
 
-  const { state } = useLocation();
+  // useEffect(() => {
+  //   dispatch(userActions.logout());
+  // }, []);
 
-  const login = () => {
-    fakeAuth.authenticate(() => {
-      setRedirectToReferrer(true)
-    })
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setInputs(inputs => ({ ...inputs, [name]: value }));
   }
-  
-  if (redirectToReferrer === true) {
-    return <Redirect to={state ? state.from : '/' } />
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    setSubmitted(true);
+    if (username && password) {
+      const { from } = location.state || { from: { pathname: "/" } };
+      dispatch(userActions.login(username, password, from));
+    }
   }
 
   const classes = makeStyles((theme) => ({
@@ -62,7 +76,7 @@ const LoginForm = () => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -73,6 +87,8 @@ const LoginForm = () => {
             name="username"
             autoComplete="username"
             autoFocus
+            value={username}
+            onChange={handleChange}
           />
           <TextField
             variant="outlined"
@@ -84,6 +100,8 @@ const LoginForm = () => {
             type="password"
             id="password"
             autoComplete="current-password"
+            value={password}
+            onChange={handleChange}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
